@@ -1,15 +1,12 @@
 # Arn0 Launcher
 
-A quieter home screen for a Samsung Tizen TV: a clock and a row of your apps, and nothing else.
+A quieter home screen for a Samsung Tizen TV: just the apps row and a screensaver.
 
 ![The launcher on the "Milky Way" wallpaper, showing the clock and an apps row](docs/preview.png)
 
-Built for one TV — a Samsung S95B on Tizen 6.5 — because its own home screen had become a shop.
-Forked from [arn0-tv](https://github.com/arn0/arn0-tv), which shares the original as a starting
-point rather than a product. Locale is `de-DE`; the date language offers Deutsch and English.
+This is a personal fork of [arn0-tv](https://github.com/arn0/arn0-tv), heavily trimmed down to be minimalistic. Built for Samsung S95BA (QE65S95BATXXN, T-PTMDEUC-1720.7). It uses `webapis.appcommon.setScreenSaver` (with periodic re-apply) to disable Samsung's own system screensaver so only the launcher's screensaver shows. Locale is `de-DE`; the date language offers Deutsch and English.
 
-**Use it at your own risk.** Installing the launcher changes nothing about how the TV behaves; the
-optional Home-button change (below) does. See [docs/setup-tv.md](docs/setup-tv.md) before using it.
+**Use it at your own risk.** Installing the launcher changes nothing about how the TV behaves; the optional Home-button change (below) does. See [docs/setup-tv.md](docs/setup-tv.md) before using it.
 
 ## Commands
 
@@ -76,8 +73,7 @@ Blue = Lab (developer tests and probes). On Home, ◀ ▶ alternating three time
   `config.local.js`; off until they are set. Cached in `localStorage`, refreshed at most hourly,
   treated as stale after three hours.
 - **Screen saver** — after idle minutes on Home: wallpapers full screen with clock, weather and
-  photo name; everything moves (burn-in safety); any key closes it. A web app cannot switch the
-  panel off: the TV's own Eco Solution ▸ Auto Power Off does that.
+  photo name; everything moves (burn-in safety). On S95BA, `webapis.appcommon.setScreenSaver` is called (and re-applied periodically) to disable Samsung's system screensaver so only the launcher's screensaver appears. Any key closes it. A web app cannot switch the panel off: the TV's own Eco Solution ▸ Auto Power Off does that.
 - **App list** — `getAppsInfo` includes system services, so the list is filtered to look like
   store apps. Yellow shows everything; the focused app's id is shown bottom-left, which is the
   reliable thing to pin into `config.js`.

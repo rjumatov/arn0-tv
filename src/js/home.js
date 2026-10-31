@@ -153,8 +153,10 @@
         if (window.Weather) actions = actions.concat(Weather.actions());
         if (window.RenderProbe) actions = actions.concat(RenderProbe.actions());
         if (window.PlatformProbe) actions = actions.concat(PlatformProbe.actions());
+        if (window.SystemSaver) actions = actions.concat(window.SystemSaver.actions());
         var list = $('lab-list');
         list.innerHTML = '';
+        UI.resetScroll(list);
         actions.forEach(function (a) {
             var li = el('li', '', a.label);
             li._item = { kind: 'lab', run: a.run };

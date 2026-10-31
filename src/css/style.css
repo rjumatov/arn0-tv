@@ -377,7 +377,9 @@ h1, h2 {
     padding: 24px 36px;
     margin-bottom: 12px;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.06);
+    /* A hair stronger than the 0.06 the mockup used: on the S95B's OLED dark-room dimming it
+       read as absent. If ever tuned again, judge it on the TV, not on the monitor. */
+    background: rgba(255, 255, 255, 0.09);
     font-size: 36px;
     font-weight: 600;
 }
@@ -623,14 +625,24 @@ h1, h2 {
 
 /* ---------- Lab ---------- */
 
-.lab-list {
+.lab-viewport {
     position: absolute;
     top: 220px;
+    bottom: 120px;
     left: var(--edge);
+    width: 860px;
+    overflow: hidden;
+    padding-top: 6px;
+    box-sizing: border-box;
+}
+
+.lab-list {
+    position: relative;
     width: 860px;
     margin: 0;
     padding: 0;
     list-style: none;
+    transition: transform 0.18s ease-out;
 }
 
 .lab-list li {

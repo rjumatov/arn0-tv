@@ -15,6 +15,7 @@
     UI.init();
     Settings.init();
     Screensaver.init();
+    if (window.SystemSaver) SystemSaver.start();
     Weather.start();
     Home.init();
 

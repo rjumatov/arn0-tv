@@ -84,6 +84,10 @@
         document.addEventListener('visibilitychange', function () {
             if (document.hidden) enable(); else disable();
         });
+        // Keep re-applying while visible - our TV re-enables the system screensaver almost instantly unless we re-apply it periodically
+        setInterval(function () {
+            if (!document.hidden) disable();
+        }, 60000);
     }
 
     window.SystemSaver = { start: start, disable: disable, enable: enable };

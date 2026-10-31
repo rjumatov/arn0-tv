@@ -12,12 +12,8 @@
 window.LAUNCHER_CONFIG = {
     apps: [
         { id: 'xvvl3S1TT1.TizenTubeStandalone', label: 'YouTube', brand: 'youtube' },
-        { id: 'rJeHak5zRg.Spotify', label: 'Spotify' },
-        { id: 'Jz7aUrV2Q4.Twitch', label: 'Twitch' },
         { id: 'org.tizen.netflix-app', label: 'Netflix' },
         { id: 'org.tizen.primevideo', label: 'Prime Video' },
-        { id: 'MCmYXNxgcu.DisneyPlus', label: 'Disney+' },
-        { id: 'com.samsung.tv.aria-video', label: 'Apple TV' },
         { id: 'org.tizen.browser', label: 'Internet', brand: 'internet' },
         { id: 'xvvl3S1bvH.TizenBrewStandalone', label: 'TizenBrew' },
         { id: 'xvvl3S1bTI.TizenBrewStandalone', label: 'TizenBrew Installer' }

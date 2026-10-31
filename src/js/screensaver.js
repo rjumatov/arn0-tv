@@ -23,10 +23,10 @@
     var $ = UI.$;
 
     var DELAYS = [
+        { key: '2m', label: '2 min', ms: 2 * 60 * 1000 },
         { key: '3m', label: '3 min', ms: 3 * 60 * 1000 },
         { key: '5m', label: '5 min', ms: 5 * 60 * 1000 },
-        { key: '10m', label: '10 min', ms: 10 * 60 * 1000 },
-        { key: '15m', label: '15 min', ms: 15 * 60 * 1000 }
+        { key: '10m', label: '10 min', ms: 10 * 60 * 1000 }
     ];
 
     // The design asks for a photo change every 60-90 s; these are the ends and the middle.
@@ -85,7 +85,7 @@
             list.find(function (o) { return o.key === fallback; });
     }
 
-    function delay() { return option(DELAYS, prefs().delay, '3m'); }
+    function delay() { return option(DELAYS, prefs().delay, '2m'); }
     function photoEvery() { return option(PHOTO_EVERY, prefs().photoEvery, '75s'); }
     function darkAfter() { return option(DARK_AFTER, prefs().dark, '1h'); }
 

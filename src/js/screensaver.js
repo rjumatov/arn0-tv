@@ -10,9 +10,12 @@
  * frame. The poll below ticks once a second and only decides what is due.
  *
  * Burn-in is the reason anything moves at all: on this kind of panel a clock parked in one
- * corner for an hour is a real risk, so the zoom never settles, the corner text shifts on each
- * photo change, the clock moves to another corner every couple of minutes, and the whole thing
- * fades to black once the configured hour is up.
+ * corner for an hour is a real risk, so the zoom never settles, the clock and its weather move
+ * to a random corner on a jittered interval (never repeating the previous one, and never opening
+ * in a fixed corner), the corner text shifts by a few random pixels on each photo change, and
+ * the whole thing fades to black once the configured hour is up. Random rather than cyclic:
+ * a fixed rotation implies where every element will be next, and for burn-in safety nothing
+ * should be implied.
  */
 (function () {
     'use strict';
@@ -52,9 +55,10 @@
     var PAN_X = 160;                // overhang each side, matching .ss-photo in the stylesheet
     var PAN_Y = 90;
     var HELD_LEG_MS = 90 * 1000;    // one leg of the drift when a single photo is held
-    var CLOCK_MOVE_MS = 150 * 1000; // "every 2-3 minutes"
+    var CLOCK_MOVE_MS = 60 * 1000;  // between 1 and 2 minutes per move, jittered below
+    var CLOCK_MOVE_JITTER = 60 * 1000;
     var CLOCK_POSITIONS = 4;        // .ss-clock.pos-0 .. pos-3
-    var NUDGES = [[0, 0], [7, -5], [-6, 6], [4, 8]];
+    var NUDGE_PX = 9;               // random small shift of the corner text on each photo change
     var FADE_MS = 2000;             // crossfade, also set as the default in the stylesheet
     var POLL_MS = 1000;
 
@@ -70,7 +74,6 @@
     var nextClockMoveAt = 0;
     var nextPanAt = 0;
     var panSign = 1;            // flipped on each leg, so the drift alternates direction
-    var nudge = 0;
     var lastClockText = '';
     var clockPos = 0;
     var dark = false;
@@ -82,7 +85,7 @@
             list.find(function (o) { return o.key === fallback; });
     }
 
-    function delay() { return option(DELAYS, prefs().delay, '5m'); }
+    function delay() { return option(DELAYS, prefs().delay, '3m'); }
     function photoEvery() { return option(PHOTO_EVERY, prefs().photoEvery, '75s'); }
     function darkAfter() { return option(DARK_AFTER, prefs().dark, '1h'); }
 
@@ -209,15 +212,19 @@
         $('ss-date').textContent = Prefs.get().appearance.showDate ? shortDate(d) : '';
     }
 
+    function randInt(min, max) {
+        return Math.round(min + Math.random() * (max - min));
+    }
+
     function caption(w) {
         $('ss-title').textContent = w ? w.title : '';
         $('ss-caption').classList.toggle('hidden', !w);
     }
 
-    // A few pixels on each photo change, so even the text that stays put does not stay put.
+    // A random few pixels on each photo change, so even the text that stays put does not stay
+    // put — and it never repeats the previous offset, so it cannot settle into a cycle.
     function nudgeText() {
-        nudge = (nudge + 1) % NUDGES.length;
-        var shift = 'translate(' + NUDGES[nudge][0] + 'px, ' + NUDGES[nudge][1] + 'px)';
+        var shift = 'translate(' + randInt(-NUDGE_PX, NUDGE_PX) + 'px, ' + randInt(-NUDGE_PX, NUDGE_PX) + 'px)';
         $('ss-caption').style.transform = shift;
         $('ss-clock').style.transform = shift;
     }
@@ -229,10 +236,14 @@
         el.classList.add('pos-' + n);
     }
 
+    // A different corner every time, at a jittered interval: a fixed rotation would eventually
+    // imply where the clock will be in an hour, and for burn-in safety nothing should be implied.
     function moveClock() {
-        clockPos = (clockPos + 1) % CLOCK_POSITIONS;
+        var next;
+        do { next = Math.floor(Math.random() * CLOCK_POSITIONS); } while (next === clockPos);
+        clockPos = next;
         setClockPos(clockPos);
-        nextClockMoveAt = Date.now() + CLOCK_MOVE_MS;
+        nextClockMoveAt = Date.now() + CLOCK_MOVE_MS + Math.random() * CLOCK_MOVE_JITTER;
     }
 
     // Hidden outright when there is no usable reading: see the note on staleness in weather.js.
@@ -254,8 +265,7 @@
         open = true;
         dark = false;
         front = 0;
-        nudge = 0;
-        clockPos = 0;
+        clockPos = Math.floor(Math.random() * CLOCK_POSITIONS);
         photoIndex = startIndex();
         panSign = 1;
         lastClockText = '';
@@ -265,7 +275,7 @@
         resetPan(layers[1], panSign);
         $('ss-dark').style.opacity = '0';
         $('ss-caption').style.transform = '';
-        setClockPos(0);
+        setClockPos(clockPos);
         $('ss-clock').style.transform = '';
 
         var now = Date.now();
@@ -282,6 +292,7 @@
         var w = photoAt(photoIndex);
         caption(w);
         showPhoto(w);
+        nudgeText();
         DevLog.log('Screen saver on');
     }
 

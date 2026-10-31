@@ -5,10 +5,10 @@
  * `pad` optionally overrides the mark's [vertical, horizontal] inset in % of the tile (default [26, 22]).
  */
 window.BRANDS = [
-    { key: 'youtube', match: /youtube|tizentube|cobalt-yt|bvH\.tizenbrew/i, mark: 'youtube', bg: '#e62117', fg: '#fff' },
+    { key: 'youtube', match: /youtube|tizentube|cobalt-yt|bvH\.tizenbrew/i, mark: 'vanced', bg: '#17181d', fg: '#FF0033' },
     { key: 'netflix', match: /netflix/i, mark: 'netflix', bg: '#141414', fg: '#e50914' },
-    { key: 'primevideo', match: /prime ?video/i, mark: 'primevideo', bg: 'linear-gradient(135deg,#0b4f7a,#1aa0e0)', fg: '#fff', pad: [12, 10] },
-    { key: 'internet', match: /internet|browser/i, text: 'WEB', bg: '#1428a0', fg: '#fff' }
+    { key: 'internet', match: /internet|browser/i, mark: 'internet', bg: '#17181d', fg: '#1aa0e0' },
+    { key: 'tizenbrewinstaller', match: /s1bTI\.tizenbrew/i, mark: 'tizenbrewinstaller', bg: '#17181d', fg: '#0DC1E9' }
 ];
 
 window.findBrand = function (keyOrApp) {

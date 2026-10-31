@@ -11,12 +11,10 @@
  */
 window.LAUNCHER_CONFIG = {
     apps: [
-        { id: 'xvvl3S1TT1.TizenTubeStandalone', label: 'YouTube', brand: 'youtube' },
         { id: 'org.tizen.netflix-app', label: 'Netflix' },
-        { id: 'org.tizen.primevideo', label: 'Prime Video' },
+        { id: 'xvvl3S1bvH.TizenBrewStandalone', label: 'YouTube' },
         { id: 'org.tizen.browser', label: 'Internet', brand: 'internet' },
-        { id: 'xvvl3S1bvH.TizenBrewStandalone', label: 'TizenBrew' },
-        { id: 'xvvl3S1bTI.TizenBrewStandalone', label: 'TizenBrew Installer' }
+        { id: 'xvvl3S1bTI.TizenBrewStandalone', label: 'TizenBrew Installer', brand: 'tizenbrewinstaller' }
     ],
 
     locale: 'en-GB',
@@ -51,7 +49,7 @@ window.LAUNCHER_CONFIG = {
      * "Sound: report audio latency" in the Lab screen. Set enabled to false to silence it.
      */
     sound: {
-        enabled: true,
+        enabled: false,
         preset: 'soft',
         volume: 0.08,
         minGapMs: 45,

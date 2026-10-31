@@ -12,10 +12,17 @@ await mkdir(resolve(src, 'img/tiles'), { recursive: true });
 for (const brand of sandbox.window.BRANDS) {
     if (!brand.mark) continue;
     const svg = await readFile(resolve(src, 'img/marks', brand.mark + '.svg'), 'utf8');
-    const coloured = svg
+    // Two mark families: filled (path fill inherits the bg colour) and stroked (Arcticons-style
+    // outlines, fill="none" stroke="currentColor" — the root presentation attribute inherits
+    // down, so a tablet of fill/stroke on <svg> recolours the whole glyph).
+    const stroke = svg.includes('stroke="currentColor"');
+    let coloured = svg
         .replace(/<title>.*?<\/title>/, '')
         .replace(/\sfill="[^"]*"/g, '')
-        .replace(/<svg\b/, `<svg fill="${brand.fg}"`);
+        .replace(/<svg\b/, `<svg fill="${stroke ? 'none' : brand.fg}"`);
+    if (stroke) coloured = coloured
+        .replace(/\sstroke="currentColor"/g, '')
+        .replace(/<svg\b/, `<svg stroke="${brand.fg}"`);
     await writeFile(resolve(src, 'img/tiles', brand.key + '.svg'), coloured);
 }
 console.log('Wrote coloured marks to src/img/tiles/');

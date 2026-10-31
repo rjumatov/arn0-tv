@@ -9,7 +9,6 @@ const CBI = 'https://raw.githubusercontent.com/elax46/custom-brand-icons/a53cabf
 const marks = {
     netflix: SI + 'netflix.svg',
     youtube: SI + 'youtube.svg',
-    primevideo: SI + 'primevideo.svg',
     appletv: SI + 'appletv.svg',
     spotify: SI + 'spotify.svg',
     plex: SI + 'plex.svg',

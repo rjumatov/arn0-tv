@@ -14,10 +14,8 @@
 
     var apps = [
         app('Arn0Lnchr0.Launcher', 'Arn0 Launcher'),
-        app('xvvl3S1TT1.TizenTubeStandalone', 'TizenTube'),
         app('com.samsung.tv.cobalt-yt', 'YouTube'),
         app('org.tizen.netflix-app', 'Netflix'),
-        app('org.tizen.primevideo', 'Prime Video'),
         app('org.tizen.browser', 'Internet'),
         app('xvvl3S1bvH.TizenBrewStandalone', 'TizenBrew'),
         app('xvvl3S1bTI.TizenBrewStandalone', 'TizenBrewInstaller'),

@@ -7,7 +7,7 @@
     var STORE_ID = /^[A-Za-z0-9]{10}\.[A-Za-z0-9_-]+$/;
     var NUMERIC_ID = /^\d{9,13}$/;
     var PRELOADED = [
-        'org.tizen.netflix-app', 'org.tizen.primevideo', 'org.tizen.apple.apple-music',
+        'org.tizen.netflix-app', 'org.tizen.apple.apple-music',
         'org.tizen.browser', 'com.samsung.tv.aria-video'
     ];
     var INTERNAL = [

@@ -24,7 +24,7 @@
             },
             screensaver: {
                 enabled: true,
-                delay: '5m',            // see Screensaver.DELAYS
+                delay: '3m',            // see Screensaver.DELAYS
                 photoEvery: '75s',      // see Screensaver.PHOTO_EVERY
                 dark: '1h'              // see Screensaver.DARK_AFTER
             },

@@ -42,13 +42,9 @@
             clear: 'Clear', cloudy: 'Cloudy', fog: 'Fog', drizzle: 'Drizzle',
             rain: 'Rain', showers: 'Showers', snow: 'Snow', storm: 'Thunderstorm'
         },
-        'es-ES': {
-            clear: 'Despejado', cloudy: 'Nublado', fog: 'Niebla', drizzle: 'Llovizna',
-            rain: 'Lluvia', showers: 'Chubascos', snow: 'Nieve', storm: 'Tormenta'
-        },
-        'fr-FR': {
-            clear: 'Dégagé', cloudy: 'Nuageux', fog: 'Brouillard', drizzle: 'Bruine',
-            rain: 'Pluie', showers: 'Averses', snow: 'Neige', storm: 'Orage'
+        'de-DE': {
+            clear: 'Klar', cloudy: 'Bewölkt', fog: 'Nebel', drizzle: 'Nieselregen',
+            rain: 'Regen', showers: 'Schauer', snow: 'Schnee', storm: 'Gewitter'
         }
     };
 
@@ -184,7 +180,7 @@
         xhr.open('GET', url(), true);
         xhr.timeout = TIMEOUT_MS;
         xhr.onload = function () {
-            var ok = false;
+            let ok;
             try {
                 ok = xhr.status >= 200 && xhr.status < 300 && accept(JSON.parse(xhr.responseText));
             } catch (e) {

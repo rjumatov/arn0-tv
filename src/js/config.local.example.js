@@ -4,7 +4,7 @@
  * packaged .wgt — nothing to strip before a push, nothing to put back before a build.
  *
  * Keys are merged over js/config.js one level deep, so you can set weather.latitude without
- * restating the rest of the block. Arrays (apps, inputs) replace the default wholesale.
+ * restating the rest of the block. Arrays (apps) replace the default wholesale.
  */
 window.LAUNCHER_LOCAL = {
     // Open-Meteo needs coordinates; two decimals is about a kilometre, which is finer than its grid.

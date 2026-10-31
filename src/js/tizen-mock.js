@@ -20,6 +20,9 @@
         app('org.tizen.primevideo', 'Prime Video'),
         app('MCmYXNxgcu.DisneyPlus', 'Disney+'),
         app('com.samsung.tv.aria-video', 'Apple TV'),
+        app('org.tizen.browser', 'Internet'),
+        app('xvvl3S1bvH.TizenBrewStandalone', 'TizenBrew'),
+        app('xvvl3S1bTI.TizenBrewStandalone', 'TizenBrewInstaller'),
         app('rJeHak5zRg.Spotify', 'Spotify'),
         app('Jz7aUrV2Q4.Twitch', 'Twitch'),
         app('E0P3lRI4H7.MYTF1', 'TF1+ : Streaming, TV en Direct'),
@@ -36,12 +39,6 @@
         app('25emanual3.emanual', 'e-Manual'),
         app('org.tizen.volume-setting', 'Volume', false)
     ];
-
-    var sources = {
-        connected: [{ type: 'TV', number: 1 }, { type: 'HDMI', number: 2 }, { type: 'HDMI', number: 4 }],
-        disconnected: [{ type: 'HDMI', number: 1 }, { type: 'HDMI', number: 3 }]
-    };
-    var currentSource = sources.connected[0];
 
     function later(fn) { setTimeout(fn, 60); }
 
@@ -62,15 +59,8 @@
         },
         systeminfo: {
             getPropertyValue: function (prop, ok, err) {
-                if (prop !== 'VIDEOSOURCE') { later(function () { err({ name: 'NotSupportedError', message: prop }); }); return; }
-                later(function () { ok(sources); });
+                later(function () { err({ name: 'NotSupportedError', message: prop }); });
             }
-        },
-        tvwindow: {
-            setSource: function (src, ok) { console.log('[mock] setSource', src); currentSource = src; later(function () { ok(src); }); },
-            getSource: function () { return currentSource; },
-            show: function (ok) { console.log('[mock] tvwindow.show'); later(ok); },
-            hide: function (ok) { console.log('[mock] tvwindow.hide'); later(ok); }
         },
         tvinputdevice: {
             registerKey: function () {},

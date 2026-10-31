@@ -145,7 +145,6 @@ h1, h2 {
 }
 
 #apps-section { top: 350px; }
-#inputs-section { top: 690px; }
 
 .shelf h2 {
     margin-bottom: 26px;
@@ -197,8 +196,7 @@ h1, h2 {
     text-overflow: ellipsis;
 }
 
-.app.focused .tile,
-.input.focused .tile {
+.app.focused .tile {
     transform: scale(1.07);
     box-shadow: 0 0 0 5px var(--ring);
 }
@@ -267,65 +265,6 @@ h1, h2 {
     height: 64px;
     margin: -32px 0 0 -32px;
 }
-
-/* Input tiles */
-
-.input {
-    flex: none;
-    width: 536px;
-    margin-right: 36px;
-}
-
-.input .tile {
-    height: 190px;
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
-}
-
-.input .mark {
-    position: relative;
-    top: auto;
-    left: auto;
-    flex: none;
-    width: 80px;
-    height: 80px;
-    margin-right: 30px;
-}
-
-.input .meta {
-    min-width: 0;
-}
-
-.input .name {
-    font-size: 34px;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1.15;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.input .port {
-    margin-top: 10px;
-    font-size: 24px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.dot {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    margin-right: 12px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.35);
-    vertical-align: 1px;
-}
-
-.dot.on { background: #4ade80; }
-
 
 /* Gear (Settings) */
 
@@ -682,24 +621,6 @@ h1, h2 {
     content: "✓\00a0\00a0";
 }
 
-.dialog-title {
-    margin-bottom: 20px;
-    font-size: 34px;
-    font-weight: 700;
-}
-
-#rename-input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 18px 24px;
-    border: 0;
-    border-radius: 12px;
-    outline: none;
-    background: var(--fg);
-    color: var(--bg);
-    font: 600 34px var(--font);
-}
-
 /* ---------- Lab ---------- */
 
 .lab-list {
@@ -778,10 +699,6 @@ footer {
 }
 
 #toast.visible { opacity: 1; }
-
-/* HDMI shown inside the launcher: the video plane must be visible through the page. */
-html.tv-mode, html.tv-mode body { background: transparent; }
-html.tv-mode #stage { visibility: hidden; }
 
 /* Desktop preview only: the stage is scaled to fit the browser window. */
 html.preview, html.preview body {

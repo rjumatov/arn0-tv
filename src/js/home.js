@@ -1,4 +1,4 @@
-/* Home, All apps and Lab screens; app list loading, launching and HDMI inputs. */
+/* Home, All apps and Lab screens; app list loading and launching. */
 (function () {
     'use strict';
 
@@ -16,9 +16,7 @@
         apps: [],              // launchable apps from the TV (or the cache)
         appsSig: null,
         lastFetch: 0,
-        showEverything: false, // All apps: bypass the consumer filter
-        tvMode: false,         // HDMI shown inside the launcher
-        hdmi: {}               // last known { port: connected }
+        showEverything: false  // All apps: bypass the consumer filter
     };
 
     // ---------- Tiles
@@ -106,44 +104,7 @@
         return wrap;
     }
 
-    function inputTile(input) {
-        var brand = findBrand(input.brand || '') || { bg: '#2a2f3a', fg: '#fff', mark: null };
-        var wrap = el('div', 'input');
-        var tile = el('div', 'tile');
-        tile.style.background = brand.bg;
-        if (brand.mark) tile.appendChild(markEl(brand));
-        var meta = el('div', 'meta');
-        meta.appendChild(el('div', 'name', input.label));
-        var port = el('div', 'port');
-        var dot = el('span', 'dot');
-        port.appendChild(dot);
-        port.appendChild(document.createTextNode('HDMI ' + input.hdmi));
-        meta.appendChild(port);
-        tile.appendChild(meta);
-        wrap.appendChild(tile);
-        wrap._item = { kind: 'input', hdmi: input.hdmi, label: input.label, method: input.method };
-        wrap._dot = dot;
-        return wrap;
-    }
-
-    // Console tile for Settings lists: brand colours and logo only.
-    function miniInputTile(input) {
-        var brand = findBrand(input.brand || '');
-        return miniTile({ label: input.label, brand: brand && { key: brand.key, bg: brand.bg, fg: brand.fg, mark: brand.mark } });
-    }
-
     // ---------- Home content
-
-    // Consoles: edited list from Settings, else config.js.
-    function inputs() {
-        return Prefs.get().inputs || cfg.inputs || [];
-    }
-
-    function setInputs(list) {
-        Prefs.get().inputs = list;
-        Prefs.save();
-        renderHome();
-    }
 
     // Entries shown on Home: edited list from Settings, else config.js.
     function homeEntries() {
@@ -172,30 +133,7 @@
         items.forEach(function (item) { row.appendChild(appTile(item)); });
         row.appendChild(allAppsTile());
 
-        var row2 = $('inputs-row');
-        row2.innerHTML = '';
-        inputs().forEach(function (input) {
-            if (!input.hidden) row2.appendChild(inputTile(input));
-        });
-        $('inputs-section').classList.toggle('hidden', !row2.children.length);
-        applyInputStatus();
         if (UI.isVisible('home')) UI.refresh();
-    }
-
-    function applyInputStatus() {
-        UI.children($('inputs-row')).forEach(function (tile) {
-            tile._dot.classList.toggle('on', state.hdmi[tile._item.hdmi] === true);
-        });
-    }
-
-    function refreshInputStatus() {
-        if (!inputs().length) return;
-        Inputs.hdmiStatus().then(function (status) {
-            state.hdmi = status;
-            applyInputStatus();
-        }).catch(function (err) {
-            log('Input status unavailable: ' + DevLog.errorText(err));
-        });
     }
 
     function renderAll() {
@@ -209,21 +147,12 @@
 
     function renderLab() {
         var actions = [
-            { label: 'Send installed app list to log', run: labDumpApps },
-            { label: 'Read inputs', run: labReadInputs },
-            { label: 'Open Samsung TV viewer only', run: function () { runLogged('Open TV viewer', Inputs.openViewer()); } }
+            { label: 'Send installed app list to log', run: labDumpApps }
         ];
         if (window.Sound) actions = actions.concat(Sound.actions());
         if (window.Weather) actions = actions.concat(Weather.actions());
         if (window.RenderProbe) actions = actions.concat(RenderProbe.actions());
         if (window.PlatformProbe) actions = actions.concat(PlatformProbe.actions());
-        inputs().forEach(function (input) {
-            var item = { kind: 'input', hdmi: input.hdmi, label: input.label };
-            var name = input.label + ' (HDMI ' + input.hdmi + ')';
-            actions.push({ label: name + ': switch + viewer', run: function () { openInput(item, 'switch+viewer'); } });
-            actions.push({ label: name + ': switch only', run: function () { openInput(item, 'switch'); } });
-            actions.push({ label: name + ': inside launcher', run: function () { openInput(item, 'inapp'); } });
-        });
         var list = $('lab-list');
         list.innerHTML = '';
         actions.forEach(function (a) {
@@ -255,42 +184,11 @@
         });
     }
 
-    function openInput(item, method) {
-        method = method || item.method || cfg.inputMethod;
-        UI.toast('Switching to ' + item.label + '…');
-        runLogged('Input HDMI ' + item.hdmi + ' via ' + method, Inputs.open(item.hdmi, method)).then(function (result) {
-            log('Current source now: ' + Inputs.describeSource(Inputs.current()));
-            if (result === 'inapp') enterTvMode();
-        }).catch(function (err) {
-            UI.toast('Could not switch to ' + item.label + ': ' + DevLog.errorText(err));
-        });
-    }
-
-    function enterTvMode() {
-        state.tvMode = true;
-        document.documentElement.classList.add('tv-mode');
-    }
-
-    function exitTvMode() {
-        state.tvMode = false;
-        document.documentElement.classList.remove('tv-mode');
-        Inputs.hide().catch(function (err) { log('Hide input failed: ' + DevLog.errorText(err)); });
-    }
-
     function labDumpApps() {
         runLogged('App list', Apps.getInstalledApps()).then(function (apps) {
             log('apps: ' + apps.length + ' total, ' + apps.filter(function (a) { return a.show; }).length + ' with show=true',
                 apps.map(Apps.describe));
             UI.toast('Sent ' + apps.length + ' apps to the log');
-        }).catch(function () {});
-    }
-
-    function labReadInputs() {
-        runLogged('Inputs', Inputs.sources()).then(function (info) {
-            var fmt = function (list) { return (list || []).map(Inputs.describeSource).join(', ') || 'none'; };
-            log('connected: ' + fmt(info.connected));
-            log('disconnected: ' + fmt(info.disconnected));
-            log('current: ' + Inputs.describeSource(Inputs.current()));
         }).catch(function () {});
     }
 
@@ -410,12 +308,11 @@
             startRow: 1,
             hints: [['OK', 'Open'], ['▲', 'Settings']],
             rows: function () {
-                return [[$('gear')], UI.children($('apps-row')), UI.children($('inputs-row'))];
+                return [[$('gear')], UI.children($('apps-row'))];
             },
             activate: function (item) {
                 if (item.kind === 'app') launchApp(item);
                 else if (item.kind === 'all') UI.show('all');
-                else if (item.kind === 'input') openInput(item);
                 else if (item.kind === 'settings') UI.show('settings');
             },
             // Home is the root: Back does nothing.
@@ -444,10 +341,6 @@
         registerViews();
         UI.setColourKey(colourKey);
         UI.setKeyHook(function (k) {
-            if (state.tvMode) {
-                if (k === KEY.BACK || k === KEY.ESC || k === KEY.BACKSPACE) exitTvMode();
-                return true;
-            }
             if (!UI.isVisible('home')) { recentKeys.length = 0; return false; }
             if (gameCodeEntered(k)) {
                 if (window.RunnerGame) RunnerGame.open(true);
@@ -466,12 +359,8 @@
         Wallpaper.start();
 
         document.addEventListener('visibilitychange', function () {
-            if (document.hidden) {
-                if (state.tvMode) exitTvMode();
-                return;
-            }
+            if (document.hidden) return;
             updateClock();
-            refreshInputStatus();
             if (UI.isVisible('home')) Wallpaper.homeShown();
             if (Date.now() - state.lastFetch > REFRESH_AFTER_MS) setTimeout(loadApps, 1500);
         });
@@ -486,17 +375,10 @@
         apps: function () { return state.apps; },
         homeItems: homeItems,
         setHomeItems: setHomeItems,
-        inputs: inputs,
-        setInputs: setInputs,
-        hdmiStatus: function () { return state.hdmi; },
-        // An HDMI input shown inside the launcher: no screen saver over it.
-        tvMode: function () { return state.tvMode; },
-        refreshInputStatus: refreshInputStatus,
         renderLab: renderLab,
         updateClock: updateClock,
         reloadApps: loadApps,
         miniTile: miniTile,
-        miniInputTile: miniInputTile,
         onAppsChanged: function (fn) { listeners.push(fn); }
     };
 })();

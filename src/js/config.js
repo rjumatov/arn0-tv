@@ -8,32 +8,20 @@
  *   label                             optional display name
  *   brand                             optional key from js/brands.js (otherwise guessed from the name)
  * Entries that match nothing are skipped.
- *
- * inputs: HDMI ports shown in the second row. Set `hdmi` to the port each device is plugged into.
  */
 window.LAUNCHER_CONFIG = {
     apps: [
         { id: 'xvvl3S1TT1.TizenTubeStandalone', label: 'YouTube', brand: 'youtube' },
         { id: 'rJeHak5zRg.Spotify', label: 'Spotify' },
         { id: 'Jz7aUrV2Q4.Twitch', label: 'Twitch' },
-        { id: 'E0P3lRI4H7.MYTF1', label: 'TF1+' },
         { id: 'org.tizen.netflix-app', label: 'Netflix' },
         { id: 'org.tizen.primevideo', label: 'Prime Video' },
         { id: 'MCmYXNxgcu.DisneyPlus', label: 'Disney+' },
-        { id: 'com.samsung.tv.aria-video', label: 'Apple TV' }
+        { id: 'com.samsung.tv.aria-video', label: 'Apple TV' },
+        { id: 'org.tizen.browser', label: 'Internet', brand: 'internet' },
+        { id: 'xvvl3S1bvH.TizenBrewStandalone', label: 'TizenBrew' },
+        { id: 'xvvl3S1bTI.TizenBrewStandalone', label: 'TizenBrew Installer' }
     ],
-
-    inputs: [
-        { hdmi: 1, label: 'Nintendo Switch 2', brand: 'switch' },
-        { hdmi: 2, label: 'PlayStation 5', brand: 'playstation' },
-        { hdmi: 4, label: 'Xbox Series X', brand: 'xbox' }
-    ],
-
-    // How an input tile switches the TV. See README "HDMI inputs".
-    //   'switch+viewer'  set the TV source, then open Samsung's TV viewer (default)
-    //   'switch'         only set the TV source
-    //   'inapp'          show the input full screen inside the launcher (Back returns)
-    inputMethod: 'switch+viewer',
 
     locale: 'en-GB',
 
@@ -93,7 +81,7 @@ window.LAUNCHER_CONFIG = {
  * back before a build, and the overlay reaches the browser preview and the .wgt alike.
  *
  * Merged one level deep, so a local file can set weather.latitude without restating the rest of
- * the block. Arrays (apps, inputs) and plain values replace the default outright.
+ * the block. Arrays (apps) and plain values replace the default outright.
  */
 (function () {
     'use strict';

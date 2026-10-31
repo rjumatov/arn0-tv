@@ -35,8 +35,7 @@
                 font: 'manrope',        // see Appearance.FONTS
                 names: 'always'         // app names under tiles: 'always' | 'focused' | 'never'
             },
-            home: null,                 // [{ id, label, brand }] once edited; null = config.js apps
-            inputs: null                // [{ hdmi, label, brand, method, hidden }] once edited; null = config.js
+            home: null                  // [{ id, label, brand }] once edited; null = config.js apps
         };
     }
 
@@ -57,7 +56,6 @@
                 merge(prefs.screensaver, saved.screensaver);
                 merge(prefs.appearance, saved.appearance);
                 if (Array.isArray(saved.home) && saved.home.length) prefs.home = saved.home;
-                if (Array.isArray(saved.inputs)) prefs.inputs = saved.inputs;
             } else {
                 var legacy = localStorage.getItem(LEGACY_WALLPAPER_KEY);
                 if (legacy) prefs.wallpaper.photo = legacy;

@@ -1,4 +1,4 @@
-/* Settings: overview, Background, Apps on Home, Consoles, Appearance, Samsung, Advanced. */
+/* Settings: overview, Background, Apps on Home, Appearance, Samsung, Advanced. */
 (function () {
     'use strict';
 
@@ -7,26 +7,10 @@
     var KEY = UI.KEY;
     var THUMB_COLS = 6;
 
-    // Samsung's on-screen keyboard (IME) sends these for its Done / Cancel buttons.
-    var IME_DONE = 65376;
-    var IME_CANCEL = 65385;
-
     // Samsung's own home screen (Smart Hub); TV settings are one press away from there.
     // Opening com.samsung.tv.coba.setting directly does not work on the Q70B: a plain launch
     // fails (UnknownError) and app controls are accepted but show nothing.
     var SAMSUNG_HOME = 'com.samsung.tv.csfs';
-
-    var LOGOS = [
-        { key: 'playstation', label: 'PlayStation' },
-        { key: 'xbox', label: 'Xbox' },
-        { key: 'switch', label: 'Nintendo Switch' },
-        { key: '', label: 'None' }
-    ];
-
-    var METHODS = [
-        { key: 'switch+viewer', label: 'TV input', hint: 'Game Mode works' },
-        { key: 'inapp', label: 'Inside the launcher', hint: 'Back returns here' }
-    ];
 
     // ---------- Generic list pages
 
@@ -106,11 +90,9 @@
 
     function overviewEntries() {
         var a = Prefs.get().appearance;
-        var shown = Home.inputs().filter(function (i) { return !i.hidden; }).length;
         return [
             { label: 'Background', value: wallpaperSummary(), run: function () { UI.show('bg'); } },
             { label: 'Apps on Home', value: Home.homeItems().length + ' apps', run: function () { UI.show('homeapps'); } },
-            { label: 'Consoles', value: shown + ' on Home', run: function () { UI.show('consoles'); } },
             { label: 'Appearance', value: Appearance.font(a.font).label + ' · ' + (a.clock === '12h' ? '12-hour' : '24-hour'), run: function () { UI.show('appearance'); } },
             { label: 'Navigation sound', value: soundSummary(), run: function () { UI.show('sound-settings'); } },
             { label: 'Screen saver', value: screensaverSummary(), run: function () { UI.show('screensaver-settings'); } },
@@ -494,135 +476,6 @@
         return true;
     }
 
-    // ---------- Consoles
-
-    var renderConsoles = null;
-
-    function methodOf(input) {
-        var key = input.method || window.LAUNCHER_CONFIG.inputMethod;
-        return METHODS.find(function (m) { return m.key === key; }) || METHODS[0];
-    }
-
-    function logoOf(input) {
-        return LOGOS.find(function (l) { return l.key === (input.brand || ''); }) || LOGOS[3];
-    }
-
-    function consoleEntries() {
-        var entries = Home.inputs().map(function (input, i) {
-            return {
-                label: input.label,
-                value: input.hidden ? 'Hidden' : 'HDMI ' + input.hdmi + ' · ' + methodOf(input).label,
-                mini: Home.miniInputTile(input),
-                run: function () { consoleMenu(i); }
-            };
-        });
-        entries.push({ label: '+ Add a console', value: '', run: addConsole });
-        return entries;
-    }
-
-    function editInputs(change) {
-        var list = Home.inputs().map(function (i) { return Object.assign({}, i); });
-        change(list);
-        Home.setInputs(list);
-        renderConsoles();
-        UI.refresh();
-    }
-
-    function consoleMenu(i) {
-        var c = Home.inputs()[i];
-        var count = Home.inputs().length;
-        var status = Home.hdmiStatus();
-        var options = [
-            {
-                label: 'Rename', run: function () {
-                    rename(c.label, function (name) { editInputs(function (l) { l[i].label = name; }); });
-                }
-            },
-            {
-                label: 'HDMI port · HDMI ' + c.hdmi, run: function () {
-                    UI.menu('HDMI port', [1, 2, 3, 4].map(function (n) {
-                        return {
-                            label: 'HDMI ' + n + (status[n] ? ' · connected' : ''),
-                            checked: n === c.hdmi,
-                            run: function () { editInputs(function (l) { l[i].hdmi = n; }); }
-                        };
-                    }));
-                }
-            },
-            {
-                label: 'Logo · ' + logoOf(c).label, run: function () {
-                    UI.menu('Logo', LOGOS.map(function (logo) {
-                        return {
-                            label: logo.label,
-                            checked: logo.key === (c.brand || ''),
-                            run: function () { editInputs(function (l) { l[i].brand = logo.key; }); }
-                        };
-                    }));
-                }
-            },
-            {
-                label: 'Opens · ' + methodOf(c).label, run: function () {
-                    UI.menu('Opens', METHODS.map(function (m) {
-                        return {
-                            label: m.label + ' · ' + m.hint,
-                            checked: m.key === methodOf(c).key,
-                            run: function () { editInputs(function (l) { l[i].method = m.key; }); }
-                        };
-                    }));
-                }
-            },
-            {
-                label: c.hidden ? 'Show on Home' : 'Hide from Home',
-                run: function () { editInputs(function (l) { l[i].hidden = !c.hidden; }); }
-            }
-        ];
-        if (i > 0) {
-            options.push({ label: 'Move earlier', run: function () { editInputs(function (l) { l.splice(i - 1, 0, l.splice(i, 1)[0]); }); } });
-        }
-        if (i < count - 1) {
-            options.push({ label: 'Move later', run: function () { editInputs(function (l) { l.splice(i + 1, 0, l.splice(i, 1)[0]); }); } });
-        }
-        options.push({
-            label: 'Remove', run: function () {
-                UI.menu('Remove ' + c.label + '?', [
-                    { label: 'Remove', run: function () { editInputs(function (l) { l.splice(i, 1); }); } },
-                    { label: 'Cancel' }
-                ]);
-            }
-        });
-        options.push({ label: 'Cancel' });
-        UI.menu(c.label, options);
-    }
-
-    function addConsole() {
-        var used = {};
-        Home.inputs().forEach(function (i) { used[i.hdmi] = true; });
-        var port = [1, 2, 3, 4].find(function (n) { return !used[n]; }) || 1;
-        editInputs(function (l) { l.push({ hdmi: port, label: 'Console', brand: '' }); });
-        var index = Home.inputs().length - 1;
-        rename('Console', function (name) { editInputs(function (l) { l[index].label = name; }); });
-    }
-
-    // ---------- Rename dialog (uses Samsung's on-screen keyboard)
-
-    var renameDone = null;
-
-    function rename(current, done) {
-        renameDone = done;
-        $('rename-input').value = current;
-        UI.show('rename');
-    }
-
-    function closeRename(save) {
-        var input = $('rename-input');
-        var value = input.value.trim();
-        var done = renameDone;
-        renameDone = null;
-        input.blur();
-        UI.back();
-        if (save && value && done) done(value);
-    }
-
     // ---------- Advanced
 
     function advancedEntries() {
@@ -665,8 +518,6 @@
         registerList('settings', overviewEntries,
             [['OK', 'Change'], ['◀ ▶', 'Switch column'], ['Back', 'Home']], true);
         registerList('advanced', advancedEntries, [['OK', 'Run'], ['Back', 'Settings']]);
-        renderConsoles = registerList('consoles', consoleEntries,
-            [['OK', 'Options'], ['Back', 'Settings']]);
 
         UI.register('bg', {
             el: $('bg-settings'),
@@ -723,31 +574,6 @@
                     ['◀ ▶', 'Switch column'],
                     ['Back', 'Settings']
                 ];
-            }
-        });
-
-        UI.register('rename', {
-            el: $('rename'),
-            overlay: true,
-            focusEl: function () { return $('rename-input'); },
-            hints: [['OK', 'Save'], ['Back', 'Cancel']],
-            onShow: function () {
-                setTimeout(function () {
-                    var input = $('rename-input');
-                    input.focus();
-                    input.setSelectionRange(input.value.length, input.value.length);
-                }, 0);
-            },
-            onKey: function (k) {
-                if (k === KEY.ENTER || k === IME_DONE) {
-                    closeRename(true);
-                    return true;
-                }
-                if (k === KEY.BACK || k === KEY.ESC || k === IME_CANCEL) {
-                    closeRename(false);
-                    return true;
-                }
-                return 'pass';
             }
         });
 

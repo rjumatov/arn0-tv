@@ -10,9 +10,8 @@
     ];
 
     var LOCALES = [
-        { key: 'en-GB', label: 'English' },
-        { key: 'es-ES', label: 'Español' },
-        { key: 'fr-FR', label: 'Français' }
+        { key: 'de-DE', label: 'Deutsch' },
+        { key: 'en-GB', label: 'English' }
     ];
 
     var FALLBACK = ', "SamsungOne", "Helvetica Neue", Arial, sans-serif';

@@ -325,10 +325,9 @@
         UI.show(returnTo, { back: true });
     }
 
-    // Never over a console input or another screen, and never while the app is in the background.
+    // Never over another screen, and never while the app is in the background.
     function eligible() {
-        return prefs().enabled && UI.isVisible('home') && !document.hidden &&
-            !(window.Home && Home.tvMode());
+        return prefs().enabled && UI.isVisible('home') && !document.hidden;
     }
 
     /*
